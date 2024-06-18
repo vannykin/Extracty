@@ -98,7 +98,7 @@ class WebScraper:
             # # something like: extract_dark_webpages.run(url)
             # return cleaned_content
             
-            content = extract_html_dark_webpages.run(self.url)
+            content = await extract_html_dark_webpages.run(self.url)
             cleaned_content = self.__clean_html_content(
                 content, wanted_tags
             )
