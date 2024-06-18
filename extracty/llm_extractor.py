@@ -1,7 +1,7 @@
 import asyncio
 import instructor
 
-from openai import OpenAI
+from openai import Client
 from pydantic import BaseModel, Field, create_model
 from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 
@@ -44,8 +44,8 @@ class LLMExtractor:
         self,
         query: str,
         url: str,
-        api_key: str,
-        gpt_model: str = "gpt-4",
+        client: Client,
+        gpt_model: str = "test",
         fields: dict[str, Type] | None = None,
     ):
         """
@@ -61,7 +61,7 @@ class LLMExtractor:
         """
         self.query = query
         self.url = url
-        self.api_key = api_key
+        self.client = client
         self.gpt_model = gpt_model
         self.fields = fields
 
@@ -118,20 +118,30 @@ class LLMExtractor:
         messages = [
             {
                 "role": "system",
-                "content": "You are a helpful extractor that extract and structur data.",
+                "content": "You are a helpful extractor that extract and structure data.",
             },
             {
                 "role": "user",
-                "content": f"You will be given a content to extract information from. The content is delimited by four backticks. Also, you will be given a query of what to extract delimited by four hashtags. please have the following Query: ####{self.query}#### and here is the following Content: ```{content}```",
+                "content": f"Can you {self.query} from {content}",
             },
         ]
+        # # messages = [
+        #     {
+        #         "role": "system",
+        #         "content": "You are a helpful extractor that extract and structure data.",
+        #     },
+        #     {
+        #         "role": "user",
+        #         "content": f"You will be given a content to extract information from. The content is delimited by four backticks. Also, you will be given a query of what to extract delimited by four hashtags. please have the following Query: ####{self.query}#### and here is the following Content: ```{content}```",
+        #     },
+        # ]
         return messages
 
     def __call_openai(
-        self, prompt: list[dict], pydantic_schema: Type[T], api_key: str, gpt_model: str
+        self, prompt: list[dict], pydantic_schema: Type[T], client: Client, gpt_model: str
     ) -> dict:
-        client = instructor.patch(OpenAI(api_key=api_key))
-        response = client.chat.completions.create(
+        c = instructor.patch(client)
+        response = c.chat.completions.create(
             model=gpt_model,
             messages=prompt,
             response_model=pydantic_schema,
@@ -177,10 +187,9 @@ class LLMExtractor:
         response = self.__call_openai(
             prompt=prompt,
             pydantic_schema=pydantic_schema,
-            api_key=self.api_key,
+            client=self.client,
             gpt_model=self.gpt_model,
         )
 
         # TODO: implement more logic to handle response and create a structured output
-
         return response
