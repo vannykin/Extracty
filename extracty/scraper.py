@@ -8,7 +8,7 @@ from playwright.async_api import (
 )
 
 from pydantic import HttpUrl
-import extract_html__dark_webpages
+import extract_html_dark_webpages
 
 
 logging.basicConfig(
