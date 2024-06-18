@@ -69,7 +69,7 @@ class WebScraper:
 
         return cleaned_content
 
-    def scraping_with_langchain(
+    async def scraping_with_langchain(
         self, wanted_tags: list[str] = ["title", "meta", "span", "div", "a"]
     ):
         """
