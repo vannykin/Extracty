@@ -69,7 +69,7 @@ class WebScraper:
 
         return cleaned_content
 
-    async def scraping_with_langchain(
+    def scraping_with_langchain(
         self, wanted_tags: list[str] = ["title", "meta", "span", "div", "a"]
     ):
         """
@@ -98,7 +98,7 @@ class WebScraper:
             # # something like: extract_dark_webpages.run(url)
             # return cleaned_content
             
-            content = await extract_html_dark_webpages.run(self.url)
+            content = extract_html_dark_webpages.run(self.url)
             cleaned_content = self.__clean_html_content(
                 content, wanted_tags
             )
