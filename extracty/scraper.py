@@ -8,7 +8,7 @@ from playwright.async_api import (
 )
 
 from pydantic import HttpUrl
-import extract_html_dark_webpages
+# import extract_html_dark_webpages
 
 
 logging.basicConfig(
@@ -86,24 +86,24 @@ class WebScraper:
         """
         # ["h1", "h2", "h3", "span", "p", "div", "a", "title", "meta"]
         try:
-            # loader = AsyncHtmlLoader([self.url])
-            # docs = loader.load() # loader is an instance of AsyncHtmlLoader, docs is List[Document]
-            # # docs[0] is a Document, docs[0].page_content is a String
-            # cleaned_content = self.__clean_html_content(
-            #     docs[0].page_content, wanted_tags
-            # )
-            # # we can change docs[0].page_content input to a String from a JSON file saved after extract_dark_webpages
-            # # unless we simply return a String from extract_dark_webpages, then we can import it into scraper.py
-            # # without saving anything to a JSON file
-            # # something like: extract_dark_webpages.run(url)
-            # return cleaned_content
-            
-            content = extract_html_dark_webpages.run(self.url)
+            loader = AsyncHtmlLoader([self.url])
+            docs = loader.load() # loader is an instance of AsyncHtmlLoader, docs is List[Document]
+            # docs[0] is a Document, docs[0].page_content is a String
             cleaned_content = self.__clean_html_content(
-                content, wanted_tags
+                docs[0].page_content, wanted_tags
             )
-            
+            # we can change docs[0].page_content input to a String from a JSON file saved after extract_dark_webpages
+            # unless we simply return a String from extract_dark_webpages, then we can import it into scraper.py
+            # without saving anything to a JSON file
+            # something like: extract_dark_webpages.run(url)
             return cleaned_content
+            
+            # content = extract_html_dark_webpages.run(self.url)
+            # cleaned_content = self.__clean_html_content(
+            #     content, wanted_tags
+            # )
+            
+            # return cleaned_content
         
         except Exception as e:
             logging.error(f"Scraping Error: {e}")
