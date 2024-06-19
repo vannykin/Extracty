@@ -24,7 +24,7 @@ class WebScraper:
         self,
         html_content: str,
         wanted_tags: list[str],
-        unwanted_tags: list[str] = ["script", "style", "nav", "ul", "li", "menu", "header", "footer", "aside", "ad", "form", "input", "button"],
+        unwanted_tags: list[str] = ["script", "style", "nav", "ul", "menu", "header", "footer", "aside", "ad", "form", "input", "button"],
     ) -> str:
         """
         Cleans the HTML content by removing unwanted tags, extracting text from wanted tags,
@@ -70,7 +70,7 @@ class WebScraper:
         return cleaned_content
 
     def scraping_with_langchain(
-        self, wanted_tags: list[str] = ["title", "meta", "span", "div", "a"]
+        self, wanted_tags: list[str] = ["title", "meta", "span", "div", "li", "p", "h2"]
     ):
         """
         Scrapes the content of a web page using Requests.
