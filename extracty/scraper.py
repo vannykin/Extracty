@@ -70,7 +70,7 @@ class WebScraper:
         return cleaned_content
 
     def scraping_with_langchain(
-        self, wanted_tags: list[str] = ["title", "div", "span", "a", "p", "meta"]
+        self, wanted_tags: list[str] = ["h2", "div", "span", "tbody", "em"]
     ):
         """
         Scrapes the content of a web page using Requests.
