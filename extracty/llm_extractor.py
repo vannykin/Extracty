@@ -116,6 +116,7 @@ class LLMExtractor:
         return dynamic_model
 
     def __generate_prompt(self, content: str) -> list[dict]:
+        print(content)
         messages = [
             {
                 "role": "system",
