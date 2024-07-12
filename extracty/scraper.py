@@ -99,6 +99,7 @@ class WebScraper:
             with open(output_file, "w", encoding="utf-8") as file:
                 file.write(cleaned_content)
             
+            print(cleaned_content)
             return cleaned_content
             
             # content = extract_html_dark_webpages.run(self.url)
