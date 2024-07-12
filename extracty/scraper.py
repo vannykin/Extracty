@@ -70,7 +70,7 @@ class WebScraper:
         return cleaned_content
 
     def scraping_with_langchain(
-        self, wanted_tags: list[str] = ["h2", "div", "span", "tbody", "em"]
+        self, wanted_tags: list[str] = ["h1", "h2", "h3", "span", "p"]
     ):
         """
         Scrapes the content of a web page using Requests.
@@ -85,6 +85,7 @@ class WebScraper:
             Exception: If any error occurs during the scraping process.
         """
         # ["h1", "h2", "h3", "span", "p", "div", "a", "title", "meta"]
+        # ["h2", "div", "span", "tbody", "em"]
         try:
             loader = AsyncHtmlLoader([self.url])
             docs = loader.load() # loader is an instance of AsyncHtmlLoader, docs is List[Document]
