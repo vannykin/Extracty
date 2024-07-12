@@ -80,8 +80,8 @@ class LLMExtractor:
         scraper = WebScraper(self.url)
         try:
             # content = await scraper.ascraping_with_playwright()
-            content = scraper.scraping_with_langchain()
-            return content
+            content, length = scraper.scraping_with_langchain()
+            return str(length)
         except PlaywrightTimeoutError as pte:
             raise TimeoutError(
                 "The scraping process timed out. Or the page took too long to load. Please try again later."
@@ -177,20 +177,20 @@ class LLMExtractor:
         # content = self.__async_run_content()
         content = self.__get_content()
 
-        pydantic_schema = (
-            self.__create_pydantic_model(fields=self.fields)
-            if self.fields
-            else BaseExtractor
-        )
+        # pydantic_schema = (
+        #     self.__create_pydantic_model(fields=self.fields)
+        #     if self.fields
+        #     else BaseExtractor
+        # )
 
-        prompt = self.__generate_prompt(content)
+        # prompt = self.__generate_prompt(content)
 
-        response = self.__call_openai(
-            prompt=prompt,
-            pydantic_schema=pydantic_schema,
-            client=self.client,
-            gpt_model=self.gpt_model,
-        )
+        # response = self.__call_openai(
+        #     prompt=prompt,
+        #     pydantic_schema=pydantic_schema,
+        #     client=self.client,
+        #     gpt_model=self.gpt_model,
+        # )
 
         # TODO: implement more logic to handle response and create a structured output
-        return content[:10]
+        return content
