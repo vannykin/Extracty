@@ -193,4 +193,4 @@ class LLMExtractor:
         # )
 
         # TODO: implement more logic to handle response and create a structured output
-        return content[:10]
+        return content[:100]
