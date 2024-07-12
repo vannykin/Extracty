@@ -24,7 +24,7 @@ class WebScraper:
         self,
         html_content: str,
         wanted_tags: list[str],
-        unwanted_tags: list[str] = ["script", "style", "nav", "ul", "menu", "header", "head", "footer", "aside", "ad", "form", "input", "button"],
+        unwanted_tags: list[str] = ["script", "style", "nav", "ul", "menu", "header", "head", "footer", "aside", "ad", "input", "button"],
     ) -> str:
         """
         Cleans the HTML content by removing unwanted tags, extracting text from wanted tags,
