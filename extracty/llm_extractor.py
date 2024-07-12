@@ -1,5 +1,6 @@
 import asyncio
 import instructor
+import os
 
 from openai import Client
 from pydantic import BaseModel, Field, create_model
@@ -175,6 +176,15 @@ class LLMExtractor:
         """
         # content = self.__async_run_content()
         content = self.__get_content()
+        output_file = "C:/Users/kin_v/Downloads/output.html"
+            
+        print(f"Saving to: {output_file}")
+        print(f"Current working directory: {os.getcwd()}")
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
+        with open(output_file, "w", encoding="utf-8") as file:
+            file.write(content)
+        
+        print(f"File saved to: {output_file}")
 
         pydantic_schema = (
             self.__create_pydantic_model(fields=self.fields)
