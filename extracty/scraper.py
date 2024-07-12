@@ -96,7 +96,7 @@ class WebScraper:
             # unless we simply return a String from extract_dark_webpages, then we can import it into scraper.py
             # without saving anything to a JSON file
             # something like: extract_dark_webpages.run(url)
-            return (cleaned_content, len(cleaned_content))
+            return cleaned_content
             
             # content = extract_html_dark_webpages.run(self.url)
             # cleaned_content = self.__clean_html_content(

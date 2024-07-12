@@ -80,8 +80,8 @@ class LLMExtractor:
         scraper = WebScraper(self.url)
         try:
             # content = await scraper.ascraping_with_playwright()
-            content, length = scraper.scraping_with_langchain()
-            return str(length)
+            content = scraper.scraping_with_langchain()
+            return content
         except PlaywrightTimeoutError as pte:
             raise TimeoutError(
                 "The scraping process timed out. Or the page took too long to load. Please try again later."
