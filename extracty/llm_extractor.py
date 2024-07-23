@@ -45,9 +45,8 @@ class LLMExtractor:
         self,
         query: str,
         url: str,
-        client: Client,
-        gpt_model: str = "test",
-        fields: dict[str, Type] | None = None,
+        pipeline: Pipeline,
+        # fields: dict[str, Type] | None = None,
     ):
         """
         Initializes an instance of the LLMExtractor class.
@@ -62,9 +61,8 @@ class LLMExtractor:
         """
         self.query = query
         self.url = url
-        self.client = client
-        self.gpt_model = gpt_model
-        self.fields = fields
+        self.pipeline = pipeline
+        # self.fields = fields
 
     def __get_content(self) -> str:
         """
@@ -139,15 +137,37 @@ class LLMExtractor:
         return messages
 
     def __call_openai(
-        self, prompt: list[dict], pydantic_schema: Type[T], client: Client, gpt_model: str
-    ) -> dict:
-        c = instructor.patch(client)
-        response = c.chat.completions.create(
-            model=gpt_model,
-            messages=prompt,
-            response_model=pydantic_schema,
-            temperature=0.125,
+        self, prompt: list[dict], pipeline: Pipeline) -> str:
+        # c = instructor.patch(client)
+        # response = c.chat.completions.create(
+        #     model=gpt_model,
+        #     messages=prompt,
+        #     response_model=pydantic_schema,
+        #     temperature=0.125,
+        # )
+        # return response
+        
+        prompt = pipeline.tokenizer.apply_chat_template(
+                prompt,
+                tokenize=False,
+                add_generation_prompt=True
         )
+
+        terminators = [
+            pipeline.tokenizer.eos_token_id,
+            pipeline.tokenizer.convert_tokens_to_ids("<|eot_id|>")
+        ]
+
+        outputs = pipeline(
+            prompt,
+            max_new_tokens=256,
+            eos_token_id=terminators,
+            do_sample=True,
+            temperature=0.6,
+            top_p=0.9,
+        )
+
+        response = outputs[0]["generated_text"][len(prompt):]
         return response
 
     def __async_run_content(self) -> str:
@@ -183,14 +203,13 @@ class LLMExtractor:
         #     else BaseExtractor
         # )
 
-        # prompt = self.__generate_prompt(content)
+        prompt = self.__generate_prompt(content)
 
-        # response = self.__call_openai(
-        #     prompt=prompt,
-        #     pydantic_schema=pydantic_schema,
-        #     client=self.client,
-        #     gpt_model=self.gpt_model,
-        # )
+        response = self.__call_openai(
+            prompt=prompt,
+            # pydantic_schema=pydantic_schema,
+            pipeline=self.pipeline
+        )
 
         # TODO: implement more logic to handle response and create a structured output
-        return content[:100]
+        return response
