@@ -1,6 +1,5 @@
 import logging
 
-from langchain_community.document_loaders import AsyncHtmlLoader
 from bs4 import BeautifulSoup
 from playwright.async_api import (
     async_playwright,

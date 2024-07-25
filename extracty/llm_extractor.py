@@ -1,8 +1,5 @@
 import asyncio
-import instructor
-import os
 
-from openai import Client
 from pydantic import BaseModel, Field, create_model
 from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 
