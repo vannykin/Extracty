@@ -9,7 +9,6 @@ from playwright.async_api import (
 from pydantic import HttpUrl
 import extract_html_dark_webpages
 
-
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )

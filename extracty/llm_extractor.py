@@ -2,6 +2,7 @@ import asyncio
 
 from pydantic import BaseModel, Field, create_model
 from playwright.async_api import TimeoutError as PlaywrightTimeoutError
+from groq import Groq as Client
 
 from extracty import WebScraper
 
@@ -42,7 +43,7 @@ class LLMExtractor:
         self,
         query: str,
         url: str,
-        pipeline: Pipeline,
+        client: Client,
         # fields: dict[str, Type] | None = None,
     ):
         """
@@ -55,10 +56,10 @@ class LLMExtractor:
             gpt_model (str): The GPT model to use for extraction, defaults to "gpt-4".
             fields: dict[str, Type] | None: A dictionary containing the field names and their corresponding types, defaults to None.
 
-        """
+        """ 
         self.query = query
         self.url = url
-        self.pipeline = pipeline
+        self.client = client
         # self.fields = fields
 
     def __get_content(self) -> str:
@@ -121,20 +122,11 @@ class LLMExtractor:
                 "content": f"Can you {self.query} from {content}",
             },
         ]
-        # # messages = [
-        #     {
-        #         "role": "system",
-        #         "content": "You are a helpful extractor that extract and structure data.",
-        #     },
-        #     {
-        #         "role": "user",
-        #         "content": f"You will be given a content to extract information from. The content is delimited by four backticks. Also, you will be given a query of what to extract delimited by four hashtags. please have the following Query: ####{self.query}#### and here is the following Content: ```{content}```",
-        #     },
-        # ]
+
         return messages
 
     def __call_openai(
-        self, prompt: list[dict], pipeline: Pipeline) -> str:
+        self, prompt: list[dict], client: Client) -> str:
         # c = instructor.patch(client)
         # response = c.chat.completions.create(
         #     model=gpt_model,
@@ -144,28 +136,15 @@ class LLMExtractor:
         # )
         # return response
         
-        prompt = pipeline.tokenizer.apply_chat_template(
-                prompt,
-                tokenize=False,
-                add_generation_prompt=True
+        response = client.chat.completions.create(
+            messages=prompt,
+            model="llama3-70b-8192",# Or "Llama-3-8B" depending on your preference
         )
 
-        terminators = [
-            pipeline.tokenizer.eos_token_id,
-            pipeline.tokenizer.convert_tokens_to_ids("<|eot_id|>")
-        ]
-
-        outputs = pipeline(
-            prompt,
-            max_new_tokens=256,
-            eos_token_id=terminators,
-            do_sample=True,
-            temperature=0.6,
-            top_p=0.9,
-        )
-
-        response = outputs[0]["generated_text"][len(prompt):]
-        return response
+        # generated_text = response["choices"][0].message.content
+        generated_text = response.choices[0].message.content
+        
+        return generated_text
 
     def __async_run_content(self) -> str:
         """
@@ -205,7 +184,7 @@ class LLMExtractor:
         response = self.__call_openai(
             prompt=prompt,
             # pydantic_schema=pydantic_schema,
-            pipeline=self.pipeline
+            client=self.client,
         )
 
         # TODO: implement more logic to handle response and create a structured output
